@@ -11,3 +11,5 @@ A Leaflet plugin to take screenshot using html2canvas
 | position | String | 'topleft' | Button position. |
 | elementQuery | String | '#container' | The element query to screenshot. |
 | iconUrl | String | a camera icon | Icon of the button. |
+
+Inspired by [leaflet-simple-map-screenshoter](https://github.com/grinat/leaflet-simple-map-screenshoter)
