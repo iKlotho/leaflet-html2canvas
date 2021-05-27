@@ -1,7 +1,7 @@
 # leaflet-html2canvas
 A Leaflet plugin to take screenshot using html2canvas
 
-[demo](https://ptma.github.io/Leaflet.Legend/examples/index.html).
+[demo](https://iklotho.github.io/leaflet-html2canvas/examples/index.html).
 
 ## Options
 | Option | Type | Default | Description |
