@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html data-color-mode="dark" data-dark-theme="dark_dimmed">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <meta charset="utf-8" />
+    <title>html2Canvas Leaflet demo</title>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+    <style>
+        html,
+        body,
+        #map {
+            height: 100%;
+            font: 10pt "Helvetica Neue", Arial, Helvetica, sans-serif;
+            width: auto;
+            box-shadow: 0 0 4px rgb(0 0 0 / 50%);
+        }
+        
+        #sidebar {
+            display: block;
+            width: 365px;
+            height: 100%;
+            max-width: 100%;
+            float: left;
+            overflow: scroll;
+            overflow-x: hidden;
+        }
+        
+        .panel-heading {
+            width: 365px;
+            padding: 1px 21px !important;
+        }
+        
+        .panel-body {
+            width: 365px;
+        }
+    </style>
+
+</head>
+
+<body style="overflow: hidden">
+    <div id="container" style="height: 100%; width: 100%; overflow: hidden">
+        <div id="sidebar">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class>Sidebar</h3>
+                </div>
+                <div class="panel-body" style="padding-top: 20px">
+                    <h4>Test Body</h4>
+                </div>
+            </div>
+        </div>
+        <div id="map" class="sidebar-map"></div>
+    </div>
+    <script src="https://code.jquery.com/jquery-2.1.3.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.3/js/bootstrap-select.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.5.0/dist/leaflet.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://canvg.github.io/canvg/demo/v2/canvg.js"></script>
+    <script src="sample.geojson.js"></script>
+    <script src="../src/leaflet.html2canvas.js"></script>
+    <script>
+        window.addEventListener("DOMContentLoaded", (event) => {
+
+            console.log("DOM fully loaded and parsed");
+            var map = L.map("map", {
+                preferCanvas: true
+            }).setView([39.74739, -105], 13);
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+                crossOrigin: 'Anonymous',
+            }).addTo(map);
+            L.html2canvas({}).addTo(
+                map
+            );
+            var baseballIcon = L.icon({
+                iconUrl: 'baseball-marker.png',
+                iconSize: [32, 37],
+                iconAnchor: [16, 37],
+                popupAnchor: [0, -28]
+            });
+
+            function onEachFeature(feature, layer) {
+                var popupContent = "<p>I started out as a GeoJSON " +
+                    feature.geometry.type + ", but now I'm a Leaflet vector!</p>";
+
+                if (feature.properties && feature.properties.popupContent) {
+                    popupContent += feature.properties.popupContent;
+                }
+
+                layer.bindPopup(popupContent);
+            }
+
+            L.geoJSON([bicycleRental, campus], {
+
+                style: function(feature) {
+                    return feature.properties && feature.properties.style;
+                },
+
+                onEachFeature: onEachFeature,
+
+                pointToLayer: function(feature, latlng) {
+                    return L.circleMarker(latlng, {
+                        radius: 8,
+                        fillColor: "#ff7800",
+                        color: "#000",
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: 0.8
+                    });
+                }
+            }).addTo(map);
+
+            L.geoJSON(freeBus, {
+
+                filter: function(feature, layer) {
+                    if (feature.properties) {
+                        // If the property "underConstruction" exists and is true, return false (don't render features under construction)
+                        return feature.properties.underConstruction !== undefined ? !feature.properties.underConstruction : true;
+                    }
+                    return false;
+                },
+
+                onEachFeature: onEachFeature
+            }).addTo(map);
+
+            var coorsLayer = L.geoJSON(coorsField, {
+
+                pointToLayer: function(feature, latlng) {
+                    return L.marker(latlng, {
+                        icon: baseballIcon
+                    });
+                },
+
+                onEachFeature: onEachFeature
+            }).addTo(map);
+        })
+    </script>
+</body>
+
+</html>
