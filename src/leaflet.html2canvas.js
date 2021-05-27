@@ -7,6 +7,7 @@ if (typeof html2canvas === 'undefined') {
     CanvasScreenshot = L.Control.extend({
         options: {
             hidden: false,
+            position: "topleft",
             screenName: "screen",
             elementQuery: "#container",
             iconUrl: ICON_SVG_BASE64,
